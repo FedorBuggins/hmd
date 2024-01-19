@@ -1,0 +1,7 @@
+ssh_address: VanyaGiftServer
+project: hmd
+artifacts: []
+lint: cargo clippy
+test: cargo test
+build: cargo build--release
+run: ls && cargo run --release -- help
