@@ -12,6 +12,13 @@
 //! - [x] Status command
 //! - [x] Restart command
 //! - [ ] Scope option
+//! - [ ] Verbose option
+//! - [ ] Pretty logs
+//! - [ ] Publish crate
+//! - [ ] Completions
+//! - [ ] Man
+//! - [ ] Status option for deploy
+//! - [ ] Log option for deploy
 //! - [ ] Split by modules
 //! - [ ] Config path option
 //!
@@ -34,6 +41,8 @@ const HMD_CONFIG_YML: &str = "~/.hmd/config.yml";
 const HMD_YML: &str = "hmd.yml";
 
 const SCRIPT: &str = include_str!("../script.sh");
+
+const PROJECT_NOT_PROVIDED: &str = "Project not provided";
 
 /// Home Deploy Tool
 ///
@@ -251,7 +260,7 @@ fn launch() -> io::Result<()> {
       let project = project
         .or_else(|| Some(read_hmd_yml().ok()?.project))
         .or_else(|| current_dir().ok())
-        .ok_or(other_err("Project not provided"))?;
+        .ok_or(other_err(PROJECT_NOT_PROVIDED))?;
       init(&Env::new(&project, &get_ssh_address(ssh_address)?))
     }
     Command::Deploy { dirty } => {
@@ -263,18 +272,14 @@ fn launch() -> io::Result<()> {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
     } => {
-      let project = project
-        .or_else(|| Some(read_hmd_yml().ok()?.project))
-        .ok_or(other_err("Project not provided"))?;
+      let project = get_project(project)?;
       stop(&Env::new(&project, &get_ssh_address(ssh_address)?))
     }
     Command::Restart {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
     } => {
-      let project = project
-        .or_else(|| Some(read_hmd_yml().ok()?.project))
-        .ok_or(other_err("Project not provided"))?;
+      let project = get_project(project)?;
       let env = Env::new(&project, &get_ssh_address(ssh_address)?);
       restart_pipeline(&env)
     }
@@ -282,18 +287,14 @@ fn launch() -> io::Result<()> {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
     } => {
-      let project = project
-        .or_else(|| Some(read_hmd_yml().ok()?.project))
-        .ok_or(other_err("Project not provided"))?;
+      let project = get_project(project)?;
       status(&Env::new(&project, &get_ssh_address(ssh_address)?))
     }
     Command::Log {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
     } => {
-      let project = project
-        .or_else(|| Some(read_hmd_yml().ok()?.project))
-        .ok_or(other_err("Project not provided"))?;
+      let project = get_project(project)?;
       log(&Env::new(&project, &get_ssh_address(ssh_address)?))
     }
     Command::List {
@@ -304,17 +305,17 @@ fn launch() -> io::Result<()> {
       project,
     } => {
       let project =
-        project.as_ref().ok_or(other_err("Project not provided"))?;
+        project.as_ref().ok_or(other_err(PROJECT_NOT_PROVIDED))?;
       remove(&Env::new(project, &get_ssh_address(ssh_address)?))
     }
   }
 }
 
-/// Searches ssh address in `ssh_address`, [`HMD_YML`] or [`HMD_CONFIG_YML`]
+/// Searches ssh address in `ssh_address`, [`HMD_YML`] and [`HMD_CONFIG_YML`]
 ///
 /// # Errors
 ///
-/// This function will return an error if ssh address not provided
+/// Returns an error if ssh address not provided
 fn get_ssh_address(
   ssh_address: Option<String>,
 ) -> io::Result<String> {
@@ -322,6 +323,17 @@ fn get_ssh_address(
     .or_else(|| Some(read_hmd_yml().ok()?.ssh_address))
     .or_else(|| Some(read_hmd_config_yml().ok()?.ssh_address))
     .ok_or(other_err("SSH address not provided"))
+}
+
+/// Searches project in `project` and [`HMD_YML`]
+///
+/// # Errors
+///
+/// Returns an error if project not provided
+fn get_project(project: Option<String>) -> io::Result<String> {
+  project
+    .or_else(|| Some(read_hmd_yml().ok()?.project))
+    .ok_or(other_err(PROJECT_NOT_PROVIDED))
 }
 
 fn current_dir() -> io::Result<String> {
