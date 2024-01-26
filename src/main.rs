@@ -12,18 +12,18 @@
 //! - [x] Status command
 //! - [x] Restart command
 //! - [x] Split by modules
+//! - [ ] Notifications via Telegram Bot
 //! - [ ] Scope option
 //! - [ ] Verbose option
 //! - [ ] Pretty logs
 //! - [ ] Publish crate
 //! - [ ] Completions
 //! - [ ] Man
+//! - [ ] Update README
 //! - [ ] Status option for deploy
 //! - [ ] Log option for deploy
 //! - [ ] Config path option
 //!
-
-#![warn(clippy::pedantic)]
 
 mod cli;
 mod env;
