@@ -14,3 +14,7 @@ clap = { version = "4", features = ["derive"] }
 indexmap = { version = "2", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
+
+[build-dependencies]
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
