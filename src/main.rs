@@ -384,7 +384,9 @@ fn status(env: &Env) -> io::Result<()> {
 
 fn log(env: &Env) -> io::Result<()> {
   let ssh = &mut ssh(&env.ssh_address);
-  ssh.arg(format!("tail -n 50 -f {}", env.out_log()));
+  let log = env.out_log();
+  let pid = env.pipeline_pid();
+  ssh.arg(format!("tail -n 50 -f {log} --pid `cat {pid}`"));
   exec_verbose(ssh)?;
   Ok(())
 }
