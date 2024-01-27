@@ -375,7 +375,9 @@ fn kill_and_wait_cmd(pipeline_pid: &str) -> String {
 
 fn status(env: &Env) -> io::Result<()> {
   let ssh = &mut ssh(&env.ssh_address);
-  ssh.arg(format!("tail -f {}", env.status_log()));
+  let status_log = env.status_log();
+  let pid = env.pipeline_pid();
+  ssh.arg(format!("tail -f {status_log} --pid `cat {pid}`"));
   exec_verbose(ssh)?;
   Ok(())
 }
