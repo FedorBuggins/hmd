@@ -333,7 +333,7 @@ fn restart_pipeline(env: &Env) -> io::Result<()> {
   Ok(())
 }
 
-fn git_branch() -> Result<String, io::Error> {
+fn git_branch() -> io::Result<String> {
   let output = Cmd::new("git")
     .args(["branch", "--show-current"])
     .output()?;
