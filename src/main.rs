@@ -82,6 +82,13 @@ fn launch() -> io::Result<()> {
     Command::List {
       ssh_address: SshAddressOption { ssh_address },
     } => list(&get_ssh_address(ssh_address)?),
+    Command::Open {
+      ssh_address: SshAddressOption { ssh_address },
+      project: ProjectOption { project },
+    } => {
+      let project = get_project(project)?;
+      open(&Env::new(&project, &get_ssh_address(ssh_address)?))
+    }
     Command::Remove {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
@@ -367,6 +374,16 @@ fn log(env: &Env) -> io::Result<()> {
 fn list(ssh_address: &str) -> io::Result<()> {
   let ssh = &mut ssh(ssh_address);
   ssh.arg(format!("ls {HMD_ROOT}"));
+  exec_verbose(ssh)?;
+  Ok(())
+}
+
+fn open(env: &Env) -> io::Result<()> {
+  let ssh = &mut ssh(&env.ssh_address);
+  let work_tree = &env.work_tree;
+  ssh
+    .arg("-t")
+    .arg(format!(r#"cd {work_tree}; bash --login"#));
   exec_verbose(ssh)?;
   Ok(())
 }

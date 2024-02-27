@@ -78,6 +78,15 @@ pub(crate) enum Command {
     ssh_address: SshAddressOption,
   },
 
+  /// Open working dir at ssh server
+  #[clap(visible_alias = "o")]
+  Open {
+    #[clap(flatten)]
+    ssh_address: SshAddressOption,
+    #[clap(flatten)]
+    project: ProjectOption,
+  },
+
   /// Remove project from server
   Remove {
     #[clap(flatten)]
