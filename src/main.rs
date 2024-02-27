@@ -1,30 +1,3 @@
-//! ## TODO:
-//!
-//! - [x] List command
-//! - [x] Default project from hmd.yml
-//! - [x] Project option
-//! - [x] Deploy dirty changes
-//! - [x] Refactor to optional project
-//! - [x] Global config for ssh address
-//! - [x] Use global config ssh address if not provided
-//! - [x] Option for ssh address
-//! - [x] Upload pipeline script
-//! - [x] Status command
-//! - [x] Restart command
-//! - [x] Split by modules
-//! - [ ] Notifications via Telegram Bot
-//! - [ ] Scope option
-//! - [ ] Verbose option
-//! - [ ] Pretty logs
-//! - [ ] Publish crate
-//! - [ ] Completions
-//! - [ ] Man
-//! - [ ] Update README
-//! - [ ] Status option for deploy
-//! - [ ] Log option for deploy
-//! - [ ] Config path option
-//!
-
 mod cli;
 mod env;
 mod hmd_config_yml;
