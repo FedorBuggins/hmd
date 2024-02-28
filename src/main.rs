@@ -10,6 +10,7 @@ use std::{
 };
 
 use clap::Parser;
+use cli::{LogOption, StatusOption};
 use indexmap::IndexMap;
 
 use crate::{
@@ -45,10 +46,22 @@ fn launch() -> io::Result<()> {
         .ok_or(other_err(PROJECT_NOT_PROVIDED))?;
       init(&Env::new(&project, &get_ssh_address(ssh_address)?))
     }
-    Command::Deploy { dirty } => {
+    Command::Deploy {
+      dirty,
+      log: LogOption { log: log_flag },
+      status: StatusOption {
+        status: status_flag,
+      },
+    } => {
       let hmd_yml = hmd_yml::read()?;
       let env = &Env::new(&hmd_yml.project, &hmd_yml.ssh_address);
-      deploy(env, &hmd_yml, dirty)
+      deploy(env, &hmd_yml, dirty)?;
+      if log_flag {
+        log(env)?;
+      } else if status_flag {
+        status(env)?;
+      }
+      Ok(())
     }
     Command::Stop {
       ssh_address: SshAddressOption { ssh_address },
@@ -60,10 +73,20 @@ fn launch() -> io::Result<()> {
     Command::Restart {
       ssh_address: SshAddressOption { ssh_address },
       project: ProjectOption { project },
+      log: LogOption { log: log_flag },
+      status: StatusOption {
+        status: status_flag,
+      },
     } => {
       let project = get_project(project)?;
-      let env = Env::new(&project, &get_ssh_address(ssh_address)?);
-      restart_pipeline(&env)
+      let env = &Env::new(&project, &get_ssh_address(ssh_address)?);
+      restart_pipeline(env)?;
+      if log_flag {
+        log(env)?;
+      } else if status_flag {
+        status(env)?;
+      }
+      Ok(())
     }
     Command::Status {
       ssh_address: SshAddressOption { ssh_address },

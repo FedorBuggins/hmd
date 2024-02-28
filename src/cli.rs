@@ -35,6 +35,10 @@ pub(crate) enum Command {
     /// Push work tree with staged and unstaged changes
     #[clap(long)]
     dirty: bool,
+    #[clap(flatten)]
+    log: LogOption,
+    #[clap(flatten)]
+    status: StatusOption,
   },
 
   /// Stop pipeline
@@ -51,6 +55,10 @@ pub(crate) enum Command {
     ssh_address: SshAddressOption,
     #[clap(flatten)]
     project: ProjectOption,
+    #[clap(flatten)]
+    log: LogOption,
+    #[clap(flatten)]
+    status: StatusOption,
   },
 
   /// Show pipeline status
@@ -108,4 +116,18 @@ pub(crate) struct SshAddressOption {
   /// Formats: login@ip, alias
   #[clap(long = "ssh")]
   pub(crate) ssh_address: Option<String>,
+}
+
+#[derive(Args)]
+pub(crate) struct LogOption {
+  /// Stream pipeline log
+  #[clap(long, short)]
+  pub(crate) log: bool,
+}
+
+#[derive(Args)]
+pub(crate) struct StatusOption {
+  /// Stream pipeline status
+  #[clap(long, short)]
+  pub(crate) status: bool,
 }
